@@ -218,6 +218,20 @@ describe('Completion', () => {
       r.logs.should.include('success!')
     })
 
+    it('allows the custom completion function to use the standard one', () => {
+      const r = checkUsage(() => yargs(['./completion', '--get-yargs-completions', ''])
+          .command('foo', 'bar')
+          .command('apple', 'banana')
+          .completion('completion', (current, argv, done, defaultCompletion) => {
+            return defaultCompletion()
+          })
+          .argv
+        )
+
+      r.logs.should.include('apple')
+      r.logs.should.include('foo')
+    })
+
     it('if a promise is returned, completions can be asynchronous', (done) => {
       checkUsage((cb) => {
         yargs(['--get-yargs-completions'])
